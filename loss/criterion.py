@@ -57,7 +57,8 @@ class CriterionOhemDSN(nn.Module):
         loss3 = self.criterion2(scale_pred, target)
         
         pred = preds[0] + preds[1]
-        loss4 = lovasz_softmax(F.softmax(pred, dim=1), target, ignore=self.ignore_index)
+        scale_pred = F.interpolate(input=pred, size=(h, w), mode='bilinear', align_corners=True)
+        loss4 = lovasz_softmax(F.softmax(scale_pred, dim=1), target, ignore=self.ignore_index)
         # L = λa · la + λc · lc + λf · lf
         return 0.7*loss1 + 0.6*loss2 + 0.4*loss3 + loss4
 
